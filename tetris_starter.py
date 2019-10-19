@@ -39,7 +39,11 @@ S = [['.....',
       '..0..',
       '..00.',
       '...0.',
-      '.....']]
+      '.....'],
+     ['.....',
+      ''
+      ]
+     ]
 
 Z = [['.....',
       '.....',
@@ -214,11 +218,11 @@ def draw_grid(surface, grid):
 
 def clear_rows(grid, locked):
     inc = 0
-    for i in range(len(grid), -1, -1):
+    for i in range(len(grid)-1, -1, -1):
         row = grid[i]
         if (0, 0, 0) not in row:
             inc += 1
-            ind = 1
+            ind = i
             for j in range(len(row)):
                 try:
                     del locked[(j, i)]
