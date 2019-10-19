@@ -30,111 +30,143 @@ top_left_y = s_height - play_height
 
 # SHAPE FORMATS
 
-S = [['.....',
-      '......',
-      '..00..',
-      '.00...',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..00.',
-      '...0.',
-      '.....'],
-     ['.....',
-      ''
-      ]
+S = [['00000',
+      '00000',
+      '00110',
+      '01100',
+      '00000'],
+     ['00000',
+      '00100',
+      '00110',
+      '00010',
+      '00000'],
+     ['00000',
+      '00110',
+      '01100',
+      '00000',
+      '00000'],
+     '00000',
+     '01000',
+     '01100',
+     '00100',
+     '00000'
      ]
 
-Z = [['.....',
-      '.....',
-      '.00..',
-      '..00.',
-      '.....'],
-     ['.....',
-      '..0..',
-      '.00..',
-      '.0...',
-      '.....']]
+Z = [['00000',
+      '00000',
+      '01100',
+      '00110',
+      '00000'],
+     ['00000',
+      '00100',
+      '01100',
+      '01000',
+      '00000'],
+     ['00000',
+      '01100',
+      '00110',
+      '00000',
+      '00000'],
+     ['00000',
+      '00010',
+      '00110',
+      '00100',
+      '00000']
+     ]
 
-I = [['..0..',
-      '..0..',
-      '..0..',
-      '..0..',
-      '.....'],
-     ['.....',
-      '0000.',
-      '.....',
-      '.....',
-      '.....']]
+I = [['00100',
+      '00100',
+      '00100',
+      '00100',
+      '00000'],
+     ['00000',
+      '11110',
+      '00000',
+      '00000',
+      '00000'],
+     ['01000',
+      '01000',
+      '01000',
+      '01000',
+      '00000'],
+     ['00000',
+      '00000',
+      '11110',
+      '00000',
+      '00000']
+     ]
 
-O = [['.....',
-      '.....',
-      '.00..',
-      '.00..',
-      '.....']]
+O = [['00000',
+      '00000',
+      '01100',
+      '01100',
+      '00000']]
 
-J = [['.....',
-      '.0...',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..00.',
-      '..0..',
-      '..0..',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '...0.',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..0..',
-      '.00..',
-      '.....']]
+J = [['00000',
+      '01000',
+      '01110',
+      '00000',
+      '00000'],
+     ['00000',
+      '00110',
+      '00100',
+      '00100',
+      '00000'],
+     ['00000',
+      '00000',
+      '01110',
+      '00010',
+      '00000'],
+     ['00000',
+      '00100',
+      '00100',
+      '01100',
+      '00000']
+     ]
 
-L = [['.....',
-      '...0.',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..0..',
-      '..00.',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '.0...',
-      '.....'],
-     ['.....',
-      '.00..',
-      '..0..',
-      '..0..',
-      '.....']]
+L = [['00000',
+      '00010',
+      '01110',
+      '00000',
+      '00000'],
+     ['00000',
+      '00100',
+      '00100',
+      '00110',
+      '00000'],
+     ['00000',
+      '00000',
+      '01110',
+      '01000',
+      '00000'],
+     ['00000',
+      '01100',
+      '00100',
+      '00100',
+      '00000']
+     ]
 
-T = [['.....',
-      '..0..',
-      '.000.',
-      '.....',
-      '.....'],
-     ['.....',
-      '..0..',
-      '..00.',
-      '..0..',
-      '.....'],
-     ['.....',
-      '.....',
-      '.000.',
-      '..0..',
-      '.....'],
-     ['.....',
-      '..0..',
-      '.00..',
-      '..0..',
-      '.....']]
+T = [['00000',
+      '00100',
+      '01110',
+      '00000',
+      '00000'],
+     ['00000',
+      '00100',
+      '00110',
+      '00100',
+      '00000'],
+     ['00000',
+      '00000',
+      '01110',
+      '00100',
+      '00000'],
+     ['00000',
+      '00100',
+      '01100',
+      '00100',
+      '00000']
+     ]
 
 shapes = [S, Z, I, O, J, L, T]
 shape_colors = [(0, 255, 0), (255, 0, 0), (0, 255, 255), (255, 255, 0), (255, 165, 0), (0, 0, 255), (128, 0, 128)]
@@ -155,8 +187,7 @@ def create_grid(locked_positions={}):
     for i in range(len(grid)):
         for j in range(len(grid[i])):
             if (j, i) in locked_positions:
-                c = locked_positions[(j, i)]
-                grid[i][j] = c
+                grid[i][j] = locked_positions[(j, i)]
     return grid
 
 
@@ -167,7 +198,7 @@ def convert_shape_format(shape):
     for i, line in enumerate(format):
         row = list(line)
         for j, column in enumerate(row):
-            if column == '0':
+            if column == '1':
                 positions.append((shape.x + j, shape.y + i))
 
     for i, pos in enumerate(positions):
@@ -187,7 +218,7 @@ def valid_space(shape, grid):
     return True
 
 
-def check_lost(positions):
+def is_game_over(positions):
     for pos in positions:
         x, y = pos
         if y < 1:
@@ -218,7 +249,7 @@ def draw_grid(surface, grid):
 
 def clear_rows(grid, locked):
     inc = 0
-    for i in range(len(grid)-1, -1, -1):
+    for i in range(len(grid) - 1, -1, -1):
         row = grid[i]
         if (0, 0, 0) not in row:
             inc += 1
@@ -241,14 +272,15 @@ def draw_next_shape(shape, surface):
     font = pygame.font.SysFont('roboto', 30)
     label = font.render('Next Shape', 1, (255, 255, 255))
     sx = top_left_x + play_width + 60
-    sy = top_left_y + play_height/2 - 130
+    sy = top_left_y + play_height / 2 - 130
     format = shape.shape[shape.rotation % len(shape.shape)]
 
     for i, line in enumerate(format):
         row = list(line)
         for j, column in enumerate(row):
             if column == '0':
-                pygame.draw.rect(surface, shape.color, (sx + j * block_size, sy + i * block_size, block_size, block_size), 0)
+                pygame.draw.rect(surface, shape.color,
+                                 (sx + j * block_size, sy + i * block_size, block_size, block_size), 0)
 
     surface.blit(label, (sx, sy))
 
@@ -278,6 +310,26 @@ def draw_window(surface, grid, score=0):
     draw_grid(surface, grid)
 
 
+def pygame_event_check(event, current_piece, grid):
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_LEFT:
+            current_piece.x -= 1
+            if not (valid_space(current_piece, grid)):
+                current_piece.x += 1
+        if event.key == pygame.K_RIGHT:
+            current_piece.x += 1
+            if not (valid_space(current_piece, grid)):
+                current_piece.x -= 1
+        if event.key == pygame.K_DOWN:
+            current_piece.y += 1
+            if not (valid_space(current_piece, grid)):
+                current_piece.y -= 1
+        if event.key == pygame.K_UP:
+            current_piece.rotation += 1
+            if not (valid_space(current_piece, grid)):
+                current_piece.rotation -= 1
+
+
 def main(window):
     locked_positions = {}
     change_piece = False
@@ -295,7 +347,7 @@ def main(window):
         fall_time += clock.get_rawtime()
         clock.tick()
 
-        if level_time/1000 > 5:
+        if level_time / 1000 > 5:
             level_time = 0
             if fall_speed > 0.12:
                 fall_speed -= 0.005
@@ -306,30 +358,10 @@ def main(window):
             if not valid_space(current_piece, grid) and current_piece.y > 0:
                 current_piece.y -= 1
                 change_piece = True
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
-            if event.type == pygame.KEYDOWN:
-                # I really wish python had switch case statements
-                if event.key == pygame.K_LEFT:
-                    current_piece.x -= 1
-                    # There might be a better implementation of this
-                    if not (valid_space(current_piece, grid)):
-                        current_piece.x += 1
-                if event.key == pygame.K_RIGHT:
-                    current_piece.x += 1
-                    if not (valid_space(current_piece, grid)):
-                        current_piece.x -= 1
-                if event.key == pygame.K_DOWN:
-                    current_piece.y += 1
-                    if not (valid_space(current_piece, grid)):
-                        current_piece.y -= 1
-                if event.key == pygame.K_UP:
-                    current_piece.rotation += 1
-                    if not (valid_space(current_piece, grid)):
-                        current_piece.rotation -= 1
+            pygame_event_check(event, current_piece, grid)
 
         shape_pos = convert_shape_format(current_piece)
 
@@ -351,7 +383,7 @@ def main(window):
         draw_next_shape(next_piece, window)
         pygame.display.update()
 
-        if check_lost(locked_positions):
+        if is_game_over(locked_positions):
             run = False
 
 
