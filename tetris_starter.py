@@ -28,8 +28,11 @@ block_size = 30
 top_left_x = (s_width - play_width) // 2
 top_left_y = s_height - play_height
 
-# SHAPE FORMATS
+#  Color definitions
+WHITE = (255, 255, 255)
+BLACK = (143, 188, 143)
 
+# SHAPE FORMATS
 S = [['00000',
       '00000',
       '00110',
@@ -182,7 +185,7 @@ class Piece(object):
 
 
 def create_grid(locked_positions={}):
-    grid = [[(0, 0, 0) for _ in range(10)] for _ in range(20)]
+    grid = [[BLACK for _ in range(10)] for _ in range(20)]
 
     for i in range(len(grid)):
         for j in range(len(grid[i])):
@@ -207,7 +210,7 @@ def convert_shape_format(shape):
 
 
 def valid_space(shape, grid):
-    accepted_pos = [[(j, i) for j in range(10) for i in range(20) if grid[i][j] == (0, 0, 0)]]
+    accepted_pos = [[(j, i) for j in range(10) for i in range(20) if grid[i][j] == BLACK]]
     accepted_pos = [j for sub in accepted_pos for j in sub]
 
     formatted = convert_shape_format(shape)
@@ -251,7 +254,7 @@ def clear_rows(grid, locked):
     inc = 0
     for i in range(len(grid) - 1, -1, -1):
         row = grid[i]
-        if (0, 0, 0) not in row:
+        if BLACK not in row:
             inc += 1
             ind = i
             for j in range(len(row)):
@@ -270,27 +273,37 @@ def clear_rows(grid, locked):
 
 def draw_next_shape(shape, surface):
     font = pygame.font.SysFont('roboto', 30)
-    label = font.render('Next Shape', 1, (255, 255, 255))
-    sx = top_left_x + play_width + 60
-    sy = top_left_y + play_height / 2 - 130
-    format = shape.shape[shape.rotation % len(shape.shape)]
+    label = font.render('Next Shape', 1, WHITE)
+    start_x = top_left_x + play_width + 60
+    start_y = top_left_y + play_height / 2 - 130
+    draw_shape(start_x, start_y, surface, shape, label)
 
-    for i, line in enumerate(format):
+
+def draw_shape(start_x, start_y, surface, shape, label):
+    formatted = shape.shape[shape.rotation % len(shape.shape)]
+    for i, line in enumerate(formatted):
         row = list(line)
         for j, column in enumerate(row):
-            if column == '0':
+            if column == '1':
                 pygame.draw.rect(surface, shape.color,
-                                 (sx + j * block_size, sy + i * block_size, block_size, block_size), 0)
+                                 (start_x + j * block_size, start_y + i * block_size, block_size, block_size), 0)
+    surface.blit(label, (start_x, start_y))
 
-    surface.blit(label, (sx, sy))
+
+def draw_hold_shape(shape, surface):
+    font = pygame.font.SysFont('roboto', 30)
+    label = font.render('Hold', 1, WHITE)
+    start_x = top_left_x - play_width + 120
+    start_y = top_left_y
+    draw_shape(start_x, start_y, surface, shape, label)
 
 
 def draw_window(surface, grid, score=0):
-    surface.fill((0, 0, 0))
+    surface.fill(BLACK)
 
     pygame.font.init()
     font = pygame.font.SysFont('roboto', 60)
-    label = font.render('Retro Eye', 1, (255, 255, 255))
+    label = font.render('Retro Eye', 1, WHITE)
     surface.blit(label, (top_left_x + play_width / 2 - (label.get_width() / 2), 30))
 
     for i in range(len(grid)):
@@ -301,7 +314,7 @@ def draw_window(surface, grid, score=0):
     pygame.draw.rect(surface, (255, 0, 0), (top_left_x, top_left_y, play_width, play_height), 4)
 
     font = pygame.font.SysFont('roboto', 30)
-    label = font.render('Score ' + str(score), 1, (255, 255, 255))
+    label = font.render('Score ' + str(score), 1, WHITE)
     sx = top_left_x - play_width + 120
     sy = top_left_y
 
@@ -310,8 +323,11 @@ def draw_window(surface, grid, score=0):
     draw_grid(surface, grid)
 
 
-def pygame_event_check(event, current_piece, grid):
+# TODO: Extract into separate file for abstraction
+def pygame_event_check(event, current_piece, grid, window):
     if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_ESCAPE:
+            quit(0)
         if event.key == pygame.K_LEFT:
             current_piece.x -= 1
             if not (valid_space(current_piece, grid)):
@@ -328,6 +344,8 @@ def pygame_event_check(event, current_piece, grid):
             current_piece.rotation += 1
             if not (valid_space(current_piece, grid)):
                 current_piece.rotation -= 1
+        if event.key == pygame.K_LSHIFT:
+            draw_hold_shape(current_piece, window)
 
 
 def main(window):
@@ -361,7 +379,7 @@ def main(window):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            pygame_event_check(event, current_piece, grid)
+            pygame_event_check(event, current_piece, grid, window)
 
         shape_pos = convert_shape_format(current_piece)
 
@@ -390,8 +408,8 @@ def main(window):
 def main_menu(win):
     run = True
     while run:
-        win.fill((0, 0, 0))
-        draw_text_middle('Press Any Key To Play', 60, (255, 255, 255), win)
+        win.fill(BLACK)
+        draw_text_middle('Press Any Key To Play', 60, WHITE, win)
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
