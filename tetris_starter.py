@@ -183,6 +183,9 @@ class Piece(object):
         self.color = shape_colors[shapes.index(shape)]
         self.rotation = 0
 
+    def get_shape(self):
+        return self.shape
+
 
 def create_grid(locked_positions={}):
     grid = [[BLACK for _ in range(10)] for _ in range(20)]
@@ -340,6 +343,7 @@ def main(window):
     fall_speed = 0.27
     level_time = 0
     score = 0
+    can_hold = True
 
     while run:
         grid = create_grid(locked_positions)
@@ -379,9 +383,11 @@ def main(window):
                     current_piece.rotation += 1
                     if not (valid_space(current_piece, grid)):
                         current_piece.rotation -= 1
-                if event.key == pygame.K_LSHIFT or event.key == pygame.K_RSHIFT:
+                if event.key == (pygame.K_LSHIFT or event.key == pygame.K_RSHIFT)\
+                        and can_hold:
                     temp = hold_piece
-                    hold_piece = current_piece
+                    hold_piece = Piece(5, -1, current_piece.get_shape())
+                    can_hold = False
                     if temp is not None:
                         current_piece = temp
                     else:
@@ -403,6 +409,7 @@ def main(window):
             next_piece = get_shape()
             change_piece = False
             score += clear_rows(grid, locked_positions) * 10
+            can_hold = True
 
         draw_window(window, grid, score)
         draw_next_shape(next_piece, window)
