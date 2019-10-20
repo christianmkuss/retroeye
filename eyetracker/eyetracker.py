@@ -1,3 +1,4 @@
+from flask_restful.utils.cors import crossdomain
 from google.cloud import vision
 import cv2
 from flask import Flask, request
@@ -7,15 +8,14 @@ import threading
 
 app = Flask(__name__)
 api = Api(app)
+import time
 
 client = vision.ImageAnnotatorClient()
 
+gaze_dir = None
+
 
 class EyeController(Resource):
-    def get(self):
-        result = {'direction': self.get_gaze_dir()}
-        return jsonify(result)
-
     def __init__(self):
         self.left_eye_bb = None
         self.right_eye_bb = None
@@ -23,15 +23,25 @@ class EyeController(Resource):
         self.right_pupil = None
         self.gaze_dir = None
 
+        self.offset_l = None
+        self.offset_r = None
+
     def calc_gaze_dir(self):
         dir = "center"
         center_l = self.get_center_pt(self.left_eye_bb)
         center_r = self.get_center_pt(self.right_eye_bb)
-        if (center_l[0] - self.left_pupil[0]) < 0 or (center_r[0] - self.right_pupil[0]) < 0:
-            dir = "right"
-        if (center_l[0] - self.left_pupil[0]) > 0 or (center_r[0] - self.right_pupil[0]) > 0:
-            dir = "left"
 
+        self.offset_l = self.left_pupil[0] - center_l[0]
+        self.offset_r = self.right_pupil[0] - center_r[0]
+        if self.offset_l < -1 and self.offset_r < 1:
+            dir = "right"
+        elif self.offset_l > 1 and self.offset_r > 1:
+            dir = "left"
+        else:
+            dir = "center"
+
+        global gaze_dir
+        gaze_dir = dir
         self.gaze_dir = dir
 
     def get_gaze_dir(self):
@@ -46,14 +56,16 @@ class EyeController(Resource):
         return bbox
 
     def get_center_pt(self, bbox):
-        cx = int(bbox[1][0] - bbox[0][0]/2)
-        cy = int(bbox[1][1] - bbox[0][1]/2)
+        cx = int((bbox[1][0] + bbox[0][0])/2)
+        cy = int((bbox[1][1] + bbox[0][1])/2)
         return [cx, cy]
 
     def detect_faces(self, img):
-
+        print("Before call: {}".format(time.time()-self.initial_time))
         image = vision.types.Image(content=cv2.imencode('.jpg', img)[1].tostring())
+        print("Between call: {}".format(time.time()-self.initial_time))
         response = client.face_detection(image=image)
+        print("After call: {}".format(time.time()-self.initial_time))
         faces = response.face_annotations
 
         for face in faces:
@@ -106,21 +118,41 @@ class EyeController(Resource):
             #               (self.right_eye_bb[1][0], self.right_eye_bb[1][1]), (255, 255, 0), 2)
 
     def run_controller(self):
+        self.frame_rate = 10
+        self.prev = 0
+        self.initial_time = time.time()
         cap = cv2.VideoCapture(0)
         while True:
-            ret, frame = cap.read()
+
+            time_elapsed = time.time() - self.prev
+            res, frame = cap.read()
+
+            # if time_elapsed > 1./self.frame_rate:
+            print(time_elapsed)
+            self.prev = time.time()
             self.detect_faces(frame)
-            print("Looking %s\n" % self.get_gaze_dir())
+            # print("Looking %s\n" % self.get_gaze_dir())
+            
+            cv2.putText(frame, self.gaze_dir, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, (147, 58, 31), 2)
+            cv2.putText(frame, "Left pupil:  " + str(self.offset_l), (90, 130), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
+            cv2.putText(frame, "Right pupil: " + str(self.offset_r), (90, 165), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
+
             cv2.imshow('frame', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
+        
         cap.release()
         cv2.destroyAllWindows()
 
         return
 
 
-api.add_resource(EyeController, '/direction')
+@app.route('/direction', methods=['GET', 'OPTIONS'])
+@crossdomain(origin='*')
+def get():
+    result = {'direction': gaze_dir}
+    return jsonify(result)
+# api.add_resource(EyeController, '/direction')
 
 
 def main():
@@ -133,5 +165,5 @@ def runFlask():
 
 
 if __name__ == "__main__":
-    threading.Thread(target=runFlask).start()
-    main()
+    threading.Thread(target=main).start()
+    runFlask()
