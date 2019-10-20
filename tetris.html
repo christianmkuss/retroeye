@@ -7,9 +7,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
             integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
             crossorigin="anonymous"></script>
+<<<<<<< HEAD
+=======
+    <link href="https://fonts.googleapis.com/css?family=Monda|Orbitron|Ubuntu&display=swap" rel="stylesheet">
+>>>>>>> josh/master
     <style>
         body {
             font-family: Helvetica, sans-serif;
+            font-size: larger;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            margin-top: 9.6px;
+            margin-bottom: 9.6px;
         }
 
         #tetris {
@@ -21,8 +32,12 @@
         }
 
         #stats {
-            display: inline-block;
+            display: none;
             vertical-align: top;
+        }
+
+        #videoElement{
+            margin-top: 70px;
         }
 
         #canvas {
@@ -80,7 +95,7 @@
 
             #menu {
                 width: 100px;
-                height: 200px;
+                /*height: 200px;*/
             }
 
             #upcoming, #held {
@@ -103,7 +118,7 @@
 
             #menu {
                 width: 150px;
-                height: 300px;
+                /*height: 300px;*/
             }
 
             #upcoming, #held {
@@ -126,12 +141,13 @@
 
             #menu {
                 width: 200px;
-                height: 400px;
+                /*height: 400px;*/
             }
 
             #upcoming, #held {
                 width: 100px;
                 height: 100px;
+                padding: 0; !important;
             }
 
             #canvas {
@@ -149,7 +165,7 @@
 
             #menu {
                 width: 250px;
-                height: 500px;
+                /*height: 500px;*/
             }
 
             #upcoming, #held {
@@ -172,7 +188,7 @@
 
             #menu {
                 width: 300px;
-                height: 600px;
+                /*height: 600px;*/
             }
 
             #upcoming, #held {
@@ -195,7 +211,7 @@
 
             #menu {
                 width: 350px;
-                height: 700px;
+                /*height: 700px;*/
             }
 
             #upcoming, #held {
@@ -218,7 +234,7 @@
 
             #menu {
                 width: 400px;
-                height: 800px;
+                /*height: 800px;*/
             }
 
             #upcoming, #held {
@@ -232,34 +248,36 @@
             }
         }
 
-        /* 40px chunks */
     </style>
 </head>
 
-<body>
-<div id="container">
-    <video autoplay="true" id="videoElement">
-
-    </video>
-</div>
-<div class="container" id="tetris">
-    <div class="row header" id="menu">
-        <p id="start"><a href="javascript:play();">Press Space to Play.</a></p>
-        <p>score <span id="score">00000</span></p>
-        <p>rows <span id="rows">0</span></p>
-    </div>
+<div class="container">
     <div class="row">
-        <p>
-            <canvas class="col-sm-2 col-offset-1" id="held"></canvas>
-        </p>
-        <canvas class="col-sm-6" id="canvas">
-            Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
-        </canvas>
-        <p>
-            <canvas class="col-sm-6" id="upcoming"></canvas>
-        </p>
+        <div class="col-sm-6 text-center">
+            <h1 class="title">Retro-Eye</h1>
+        </div>
+        <div class="col-sm-6 text-center">
+            <div class="row header" id="menu">
+                <p id="start"><a href="javascript:play();">Press Space to Play.</a></p>
+                <p>score <span id="score">00000</span></p>
+                <p>rows <span id="rows">0</span></p>
+            </div>
+
+            <div class="row text-center">
+                <p>
+                    <canvas class="col" id="held"></canvas>
+                </p>
+                <canvas class="col-sm-6" id="canvas">
+                    Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
+                </canvas>
+                <p>
+                    <canvas class="col" id="upcoming"></canvas>
+                </p>
+            </div>
+        </div>
     </div>
 </div>
+
 
 <script src="stats.js"></script>
 <script>
@@ -301,7 +319,7 @@
             .then(function (stream) {
                 video.srcObject = stream;
             })
-            .catch(function (err0r) {
+            .catch(function (error) {
                 console.log("Something went wrong!");
             });
     }
@@ -313,7 +331,7 @@
         return xmlHttp.responseText;
     }
 
-    if (!window.requestAnimationFrame) { // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+    if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
             window.mozRequestAnimationFrame ||
             window.oRequestAnimationFrame ||
