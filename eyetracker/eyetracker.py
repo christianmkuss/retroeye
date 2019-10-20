@@ -1,10 +1,20 @@
 from google.cloud import vision
 import cv2
-import numpy as np
+from flask import Flask, request
+from flask_restful import Resource, Api
+from flask.ext.jsonpify import jsonify
+import threading
+
+app = Flask(__name__)
+api = Api(app)
 
 client = vision.ImageAnnotatorClient()
 
-class EyeController:
+
+class EyeController(Resource):
+    def get(self):
+        result = {'direction': self.get_gaze_dir()}
+        return jsonify(result)
 
     def __init__(self):
         self.left_eye_bb = None
@@ -110,13 +120,18 @@ class EyeController:
         return
 
 
+api.add_resource(EyeController, '/direction')
+
+
 def main():
     controller = EyeController()
     controller.run_controller()
     return
 
+def runFlask():
+    app.run(port=5000, use_reloader=False)
+
 
 if __name__ == "__main__":
+    threading.Thread(target=runFlask).start()
     main()
-    # img = cv2.imread('../image.jpg')
-    # detect_faces(img)

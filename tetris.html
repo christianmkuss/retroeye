@@ -303,18 +303,11 @@
             });
   }
 
-  function takepicture() {
-    var context = canvas.getContext('2d');
-    if (500 && 375) {
-      canvas.width = 500;
-      canvas.height = 375;
-      context.drawImage(video, 0, 0, 500, 375);
-
-      var data = canvas.toDataURL('image/png');
-      photo.setAttribute('src', data);
-    } else {
-      clearphoto();
-    }
+  function getEyeData() {
+      let xmlHttp = new XMLHttpRequest();
+      xmlHttp.open("GET", "http://127.0.0.1:5000/direction", false);
+      xmlHttp.send(null);
+      return xmlHttp.responseText;
   }
 
   if (!window.requestAnimationFrame) { // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -465,6 +458,8 @@
 
   function keydown(ev) {
     let handled = false;
+    let dir = getEyeData();
+    console.log(dir);
     if (playing) {
       switch (ev.keyCode) {
         case KEY.LEFT:
