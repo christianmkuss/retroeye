@@ -8,14 +8,17 @@ import threading
 
 app = Flask(__name__)
 api = Api(app)
-import time
 
 client = vision.ImageAnnotatorClient()
+
+gaze_dir = None
+
 
 class EyeController:
     """Class for handling eye tracking and returning outputs for direction
     of gaze and state of head nod.
     """
+
     def __init__(self):
         # Set default values for all internal variables
         self.left_eye_bb = None
@@ -26,7 +29,6 @@ class EyeController:
 
         self.offset_l = None
         self.offset_r = None
-
 
     def calc_gaze_dir(self):
         """Calculate direction of gaze for eyes.
@@ -47,15 +49,15 @@ class EyeController:
             dir = "left"
         else:
             dir = "center"
-        
-        self.gaze_dir = dir
 
+        global gaze_dir
+        gaze_dir = dir
+        self.gaze_dir = dir
 
     def get_gaze_dir(self):
         """Retrieve direction of eyes.
         """
         return self.gaze_dir
-
 
     def get_bbox(self, l, r, t, b):
         """Retrieve bounding box of landmark.
@@ -67,22 +69,21 @@ class EyeController:
         bbox[1][1] = int(b[1])
         return bbox
 
-
     def get_center_pt(self, bbox):
         """Retrieve center point of bounding box.
         """
-        cx = int((bbox[1][0] + bbox[0][0])/2)
-        cy = int((bbox[1][1] + bbox[0][1])/2)
+        cx = int((bbox[1][0] + bbox[0][0]) / 2)
+        cy = int((bbox[1][1] + bbox[0][1]) / 2)
         return [cx, cy]
-
 
     def get_nod(self):
         """Evaluate if head tilt passes threshold to become nod.
         """
         if self.tilt_angle < -10:
-            self.gaze_dir = "Nod"
+            self.gaze_dir = "nod"
+            global gaze_dir
+            gaze_dir = "nod"
         pass
-
 
     def detect_faces(self, img):
         """Generate values for eye landmarks and head tilt.
@@ -93,7 +94,7 @@ class EyeController:
 
         for face in faces:
             # Set all variables assosciated with landmarks to zero
-            l_eye_top = l_eye_r_corner = l_eye_l_corner = l_eye_bottom = r_eye_bottom = r_eye_l_corner = r_eye_r_corner\
+            l_eye_top = l_eye_r_corner = l_eye_l_corner = l_eye_bottom = r_eye_bottom = r_eye_l_corner = r_eye_r_corner \
                 = r_eye_top = 0
 
             # Establish head tilt angle
@@ -140,13 +141,12 @@ class EyeController:
             #  Form bounding boxes for left eye and right eye
             self.left_eye_bb = self.get_bbox(l_eye_l_corner, l_eye_r_corner, l_eye_top, l_eye_bottom)
             self.right_eye_bb = self.get_bbox(r_eye_l_corner, r_eye_r_corner, r_eye_top, r_eye_bottom)
-            
+
             # Identify direction of gaze
             self.calc_gaze_dir()
 
             # Identify if head is in nodding position
             self.get_nod()
-            
 
     def run_controller(self):
         """Grabs camera images and detects eye movement/head nodding
@@ -155,7 +155,7 @@ class EyeController:
         while True:
             res, frame = cap.read()
             self.detect_faces(frame)
-            
+
             cv2.imshow('frame', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
@@ -173,9 +173,6 @@ def get():
     return jsonify(result)
 
 
-# api.add_resource(EyeController, '/direction')
-
-
 def main():
     controller = EyeController()
     controller.run_controller()
@@ -187,4 +184,5 @@ def run_flask():
 
 
 if __name__ == "__main__":
-    main()
+    threading.Thread(target=main).start()
+    run_flask()
