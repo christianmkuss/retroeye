@@ -51,10 +51,10 @@ let KEY = {ESC: 27, SPACE: 32, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, SHIFT: 16}
   canvas = get('canvas'),
   ctx = canvas.getContext('2d'),
   ucanvas = get('upcoming'),
-  holdCanvas = get('held');
-uctx = ucanvas.getContext('2d'),
-  holdctx = holdCanvas.getContext('2d');
-speed = {start: 0.6, decrement: 0.005, min: 0.1}, // how long before piece drops by 1 row (seconds)
+  holdCanvas = get('held'),
+  uctx = ucanvas.getContext('2d'),
+  holdctx = holdCanvas.getContext('2d'),
+  speed = {start: 0.6, decrement: 0.005, min: 0.1}, // how long before piece drops by 1 row (seconds)
   nx = 10, // width of tetris court (in blocks)
   ny = 20, // height of tetris court (in blocks)
   nu = 5;  // width/height of upcoming preview (in blocks)
@@ -294,7 +294,9 @@ function setBlock(x, y, type) {
   blocks[x][y] = type;
   invalidate();
 }
-
+function clearHold() {
+  hold = null;
+}
 function clearBlocks() {
   blocks = [];
   invalidate();
@@ -320,6 +322,7 @@ function reset() {
   clearBlocks();
   clearRows();
   clearScore();
+  clearHold();
   setCurrentPiece(next);
   setNextPiece();
 }

@@ -1,12 +1,26 @@
 body {
     font-family: Helvetica, sans-serif;
     font-size: larger;
+    background: #282C34;
+    color: #9DA5B4;
 }
 
 h1 {
     font-family: 'Orbitron', sans-serif;
-    margin-top: 9.6px;
-    margin-bottom: 9.6px;
+    margin-top: 29.6px;
+    margin-bottom: 59.6px;
+}
+
+li {
+    list-style-type: none;
+}
+
+ul {
+    padding-left: 0;
+}
+
+.play {
+    text-decoration-color: #9DA5B4;
 }
 
 #tetris {
@@ -31,6 +45,7 @@ h1 {
     vertical-align: top;
     box-shadow: 10px 10px 10px #999;
     border: 2px solid #333;
+    background: #3E4451;
 }
 
 #menu {
@@ -52,17 +67,17 @@ h1 {
 #upcoming, #held {
     display: block;
     margin: 0 auto;
-    background-color: #E0E0E0;
+    background: #3E4451;
 }
 
 #score {
-    color: red;
+    color: #D19A66;
     font-weight: bold;
     vertical-align: middle;
 }
 
 #rows {
-    color: blue;
+    color: #E5C07B;
     font-weight: bold;
     vertical-align: middle;
 }
