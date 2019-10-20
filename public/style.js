@@ -51,9 +51,7 @@ let KEY = {ESC: 27, SPACE: 32, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40, SHIFT: 16}
     canvas = get('canvas'),
     ctx = canvas.getContext('2d'),
     ucanvas = get('upcoming'),
-    holdCanvas = get('held'),
     uctx = ucanvas.getContext('2d'),
-    holdctx = holdCanvas.getContext('2d'),
     speed = {start: 100, decrement: 0.005, min: 100}, // how long before piece drops by 1 row (seconds)
     nx = 10, // width of tetris court (in blocks)
     ny = 20, // height of tetris court (in blocks)
@@ -68,7 +66,6 @@ let dx, dy,        // pixel size of a single tetris block
     dt,            // time since starting this game
     current,       // the current piece
     next,          // the next piece
-    hold,          // the held piece
     score,         // the current score
     vscore,        // the currently displayed score (it catches up to score in small chunks - like a spinning slot machine)
     rows,          // number of completed rows in the current game
@@ -136,7 +133,7 @@ function randomPiece() {
     return {type: type, dir: DIR.UP, x: Math.round(random(0, nx - type.size)), y: 0};
 }
 
-window.setInterval(eyeball, 500);
+window.setInterval(eyeball, 300);
 
 function run() {
     showStats(); // initialize FPS counter
@@ -173,8 +170,6 @@ function resize(event) {
     canvas.height = canvas.clientHeight;
     ucanvas.width = ucanvas.clientWidth;
     ucanvas.height = ucanvas.clientHeight;
-    holdCanvas.width = holdCanvas.clientWidth;
-    holdCanvas.height = holdCanvas.clientHeight;
     dx = canvas.width / nx;
     dy = canvas.height / ny;
     invalidate();
@@ -297,9 +292,7 @@ function setBlock(x, y, type) {
     blocks[x][y] = type;
     invalidate();
 }
-function clearHold() {
-  hold = null;
-}
+
 function clearBlocks() {
     blocks = [];
     invalidate();
@@ -359,24 +352,6 @@ function handle(action) {
         case DIR.SWAP:
             swap();
             break;
-    }
-}
-
-
-function swap() {
-    if (canSwap) {
-        canSwap = false;
-        let temp = hold;
-        current.x = 5;
-        current.y = 0;
-        hold = current;
-        drawHold();
-        if (temp != null) {
-            current = temp;
-        } else {
-            current = next;
-            drawNext();
-        }
     }
 }
 
@@ -515,20 +490,6 @@ function drawNext() {
         uctx.strokeStyle = 'black';
         uctx.strokeRect(0, 0, nu * dx - 1, nu * dy - 1);
         uctx.restore();
-        invalid.next = false;
-    }
-}
-
-function drawHold() {
-    if (!!hold) {
-        let padding = (nu - next.type.size) / 2;
-        holdctx.save();
-        holdctx.translate(0.5, 0.5);
-        holdctx.clearRect(0, 0, nu * dx, nu * dy);
-        drawPiece(holdctx, hold.type, padding, padding, hold.dir);
-        holdctx.strokeStyle = 'black';
-        holdctx.strokeRect(0, 0, nu * dx - 1, nu * dy - 1);
-        holdctx.restore();
         invalid.next = false;
     }
 }
