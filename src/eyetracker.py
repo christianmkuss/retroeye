@@ -30,6 +30,8 @@ class EyeController:
         self.offset_l = None
         self.offset_r = None
 
+        self.nod_down = False
+
     def calc_gaze_dir(self):
         """Calculate direction of gaze for eyes.
         """
@@ -79,10 +81,15 @@ class EyeController:
     def get_nod(self):
         """Evaluate if head tilt passes threshold to become nod.
         """
-        if self.tilt_angle < -10:
+        if self.tilt_angle < -10 and not self.nod_down:
             self.gaze_dir = "nod"
+            self.nod_down = True
             global gaze_dir
             gaze_dir = "nod"
+        elif self.tilt_angle < -10 and self.nod_down:
+            self.nod_down = True
+        else:
+            self.nod_down = False
         pass
 
     def detect_faces(self, img):
@@ -155,6 +162,8 @@ class EyeController:
         while True:
             res, frame = cap.read()
             self.detect_faces(frame)
+
+            cv2.putText(frame, self.gaze_dir, (90, 60), cv2.FONT_HERSHEY_TRIPLEX, 1.6, (147, 58, 31), 2)
 
             cv2.imshow('frame', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
