@@ -3,8 +3,8 @@ from google.cloud import vision
 import cv2
 from flask import Flask, request
 from flask_restful import Resource, Api
-from flask.ext.jsonpify import jsonify
 import threading
+import json
 
 app = Flask(__name__)
 api = Api(app)
@@ -178,8 +178,7 @@ class EyeController:
 @app.route('/direction', methods=['GET', 'OPTIONS'])
 @crossdomain(origin='*')
 def get():
-    result = {'direction': gaze_dir}
-    return jsonify(result)
+    return json.dumps({'direction': gaze_dir})
 
 
 def main():
