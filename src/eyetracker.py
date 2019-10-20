@@ -56,20 +56,20 @@ class EyeController(Resource):
         return bbox
 
     def get_center_pt(self, bbox):
-        cx = int((bbox[1][0] + bbox[0][0])/2)
-        cy = int((bbox[1][1] + bbox[0][1])/2)
+        cx = int((bbox[1][0] + bbox[0][0]) / 2)
+        cy = int((bbox[1][1] + bbox[0][1]) / 2)
         return [cx, cy]
 
     def detect_faces(self, img):
-        print("Before call: {}".format(time.time()-self.initial_time))
+        print("Before call: {}".format(time.time() - self.initial_time))
         image = vision.types.Image(content=cv2.imencode('.jpg', img)[1].tostring())
-        print("Between call: {}".format(time.time()-self.initial_time))
+        print("Between call: {}".format(time.time() - self.initial_time))
         response = client.face_detection(image=image)
-        print("After call: {}".format(time.time()-self.initial_time))
+        print("After call: {}".format(time.time() - self.initial_time))
         faces = response.face_annotations
 
         for face in faces:
-            l_eye_top = l_eye_r_corner = l_eye_l_corner = l_eye_bottom = r_eye_bottom = r_eye_l_corner = r_eye_r_corner\
+            l_eye_top = l_eye_r_corner = l_eye_l_corner = l_eye_bottom = r_eye_bottom = r_eye_l_corner = r_eye_r_corner \
                 = r_eye_top = 0
             for landmark in face.landmarks:
                 if landmark.type == vision.enums.FaceAnnotation.Landmark.Type.LEFT_EYE_RIGHT_CORNER:
@@ -132,15 +132,17 @@ class EyeController(Resource):
             self.prev = time.time()
             self.detect_faces(frame)
             # print("Looking %s\n" % self.get_gaze_dir())
-            
+
             cv2.putText(frame, self.gaze_dir, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, (147, 58, 31), 2)
-            cv2.putText(frame, "Left pupil:  " + str(self.offset_l), (90, 130), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
-            cv2.putText(frame, "Right pupil: " + str(self.offset_r), (90, 165), cv2.FONT_HERSHEY_DUPLEX, 0.9, (147, 58, 31), 1)
+            cv2.putText(frame, "Left pupil:  " + str(self.offset_l), (90, 130), cv2.FONT_HERSHEY_DUPLEX, 0.9,
+                        (147, 58, 31), 1)
+            cv2.putText(frame, "Right pupil: " + str(self.offset_r), (90, 165), cv2.FONT_HERSHEY_DUPLEX, 0.9,
+                        (147, 58, 31), 1)
 
             cv2.imshow('frame', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-        
+
         cap.release()
         cv2.destroyAllWindows()
 
@@ -152,6 +154,8 @@ class EyeController(Resource):
 def get():
     result = {'direction': gaze_dir}
     return jsonify(result)
+
+
 # api.add_resource(EyeController, '/direction')
 
 
@@ -160,10 +164,11 @@ def main():
     controller.run_controller()
     return
 
-def runFlask():
+
+def run_flask():
     app.run(port=5000, use_reloader=False)
 
 
 if __name__ == "__main__":
     threading.Thread(target=main).start()
-    runFlask()
+    run_flask()

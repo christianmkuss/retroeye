@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Javascript Tetris</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Monda|Orbitron|Ubuntu&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 text-center">
+            <h1 class="title">Retro-Eye</h1>
+        </div>
+        <div class="col-sm-6 text-center">
+            <div class="row header" id="menu">
+                <p id="start"><a href="javascript:play();">Press Space to Play.</a></p>
+                <p>score <span id="score">00000</span></p>
+                <p>rows <span id="rows">0</span></p>
+            </div>
+
+            <div class="row text-center">
+                <p>
+                    <canvas class="col" id="held"></canvas>
+                </p>
+                <canvas class="col-sm-6" id="canvas">
+                    Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
+                </canvas>
+                <p>
+                    <canvas class="col" id="upcoming"></canvas>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="./stats.js"></script>
+<script src="./style.js"></script>
+</html>
