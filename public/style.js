@@ -297,7 +297,9 @@ function setBlock(x, y, type) {
     blocks[x][y] = type;
     invalidate();
 }
-
+function clearHold() {
+  hold = null;
+}
 function clearBlocks() {
     blocks = [];
     invalidate();

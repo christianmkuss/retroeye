@@ -13,20 +13,27 @@
 <body>
 <div class="container">
     <div class="row">
-        <div class="col-sm-6 text-center">
-            <h1 class="title">Retro-Eye</h1>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3">
+            <h1 class="big_name">Retro-Eye</h1>
+            <ul>
+                <li style="color: #56B6C2">Josh Field</li>
+                <li style="color: #98C379">Brock Fenbert</li>
+                <li style="color:#E06C75;">Christian Kuss</li>
+                <li style="color: #C678DD">Blake McHale</li>
+            </ul>
         </div>
+        <div class="col-sm-1"></div>
         <div class="col-sm-6 text-center">
             <div class="row header" id="menu">
-                <p id="start"><a href="javascript:play();">Press Space to Play.</a></p>
-                <p>score <span id="score">00000</span></p>
-                <p>rows <span id="rows">0</span></p>
+                <p id="start"><a style="color: #9DA5B4;" href="javascript:play();">Press Space to Play.</a></p>
+                <p>Score: <span id="score">00000</span></p>
+                <p>Rows: <span id="rows">0</span></p>
             </div>
 
-            <div class="row text-center">
-                <p>
-                    <canvas class="col" id="held"></canvas>
-                </p>
+
+            <div class="row">
+                <div class="col-sm-3"></div>
                 <canvas class="col-sm-6" id="canvas">
                     Sorry, this example cannot be run because your browser does not support the &lt;canvas&gt; element
                 </canvas>
@@ -35,6 +42,7 @@
                 </p>
             </div>
         </div>
+        <div class="col-sm-1"></div>
     </div>
 </div>
 </body>
