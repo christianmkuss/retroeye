@@ -3,6 +3,7 @@ body {
     font-size: larger;
     background: #282C34;
     color: #9DA5B4;
+    overflow: hidden;
 }
 
 h1 {
@@ -26,8 +27,7 @@ ul {
 #tetris {
     margin: 1em auto;
     padding: 1em;
-    border: 4px solid black;
-    border-radius: 10px;
+    border: none;
     background-color: #F8F8F8;
 }
 
@@ -43,8 +43,7 @@ ul {
 #canvas {
     display: inline-block;
     vertical-align: top;
-    box-shadow: 10px 10px 10px #999;
-    border: 2px solid #333;
+    border: none;
     background: #3E4451;
 }
 
@@ -55,7 +54,7 @@ ul {
 }
 
 #menu p {
-    margin: 0.5em 0;
+    margin: 0.25em 0;
     text-align: center;
 }
 
@@ -99,9 +98,13 @@ ul {
         /*height: 200px;*/
     }
 
-    #upcoming, #held {
-        width: 50px;
+    #upcoming {
+        /*width: 50px;*/
         height: 50px;
+    }
+
+    canvas {
+        padding: 0 !important;
     }
 
     #canvas {
@@ -122,7 +125,7 @@ ul {
         /*height: 300px;*/
     }
 
-    #upcoming, #held {
+    #upcoming {
         width: 75px;
         height: 75px;
     }
@@ -145,14 +148,13 @@ ul {
         /*height: 400px;*/
     }
 
-    #upcoming, #held {
-        width: 100px;
+    #upcoming {
+        background-color: transparent;
         height: 100px;
-        padding: 0; !important;
+        padding: 0;
     }
 
     #canvas {
-        width: 200px;
         height: 400px;
     }
 }
