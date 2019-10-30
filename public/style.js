@@ -27,9 +27,10 @@ function randomChoice(choices) {
 }
 
 function getEyeData() {
+    let url = takeSnapshot();
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", "http://127.0.0.1:5000/direction", false);
-    xmlHttp.send(null);
+    xmlHttp.send(url);
     return xmlHttp.responseText;
 }
 
@@ -518,6 +519,32 @@ function drawBlock(ctx, x, y, color) {
     ctx.fillStyle = color;
     ctx.fillRect(x * dx, y * dy, dx, dy);
     ctx.strokeRect(x * dx, y * dy, dx, dy)
+}
+
+let video = document.querySelector("#videoElement");
+
+if (navigator.mediaDevices.getUserMedia) {
+    navigator.mediaDevices.getUserMedia({video: true})
+        .then(function (stream) {
+            video.srcObject = stream;
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
+}
+
+function takeSnapshot(){
+    let hidden_canvas = document.querySelector('#hiddenCanvas'),
+        video = document.querySelector('#videoElement'),
+        width = video.videoWidth,
+        height = video.videoHeight,
+        context = hidden_canvas.getContext('2d');
+
+    hidden_canvas.width = width;
+    hidden_canvas.heigth = height;
+
+    context.drawImage(video, 0, 0, width, height);
+    return hidden_canvas.toDataURL('image/png');
 }
 
 run();

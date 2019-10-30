@@ -24,6 +24,15 @@ ul {
     text-decoration-color: #9DA5B4;
 }
 
+#hiddenCanvas {
+    visibility: hidden;
+}
+
+#videoElement {
+    height: auto;
+    max-width: 100%;
+}
+
 #tetris {
     margin: 1em auto;
     padding: 1em;

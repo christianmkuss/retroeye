@@ -5,6 +5,7 @@ from flask import Flask, request
 from flask_restful import Resource, Api
 import threading
 import json
+import base64
 
 app = Flask(__name__)
 api = Api(app)
@@ -12,6 +13,7 @@ api = Api(app)
 client = vision.ImageAnnotatorClient()
 
 gaze_dir = None
+url = ""
 
 
 class EyeController:
@@ -95,7 +97,9 @@ class EyeController:
     def detect_faces(self, img):
         """Generate values for eye landmarks and head tilt.
         """
-        image = vision.types.Image(content=cv2.imencode('.jpg', img)[1].tostring())
+        this_image = base64.b64decode(img)
+        # image = vision.types.Image(content=cv2.imencode('.jpg', img)[1].tostring())
+        image = vision.types.
         response = client.face_detection(image=image)
         faces = response.face_annotations
 
@@ -158,18 +162,19 @@ class EyeController:
     def run_controller(self):
         """Grabs camera images and detects eye movement/head nodding
         """
-        cap = cv2.VideoCapture(0)
+        global url
+        # cap = cv2.VideoCapture(0)
         while True:
-            res, frame = cap.read()
-            self.detect_faces(frame)
+            # res, frame = cap.read()
+            self.detect_faces(url)
 
-            cv2.putText(frame, self.gaze_dir, (90, 60), cv2.FONT_HERSHEY_TRIPLEX, 1.6, (147, 58, 31), 2)
+            # cv2.putText(frame, self.gaze_dir, (90, 60), cv2.FONT_HERSHEY_TRIPLEX, 1.6, (147, 58, 31), 2)
 
-            cv2.imshow('frame', frame)
+            # cv2.imshow('frame', frame)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-        cap.release()
+        # cap.release()
         cv2.destroyAllWindows()
 
         return
@@ -178,6 +183,10 @@ class EyeController:
 @app.route('/direction', methods=['GET', 'OPTIONS'])
 @crossdomain(origin='*')
 def get():
+    global url
+    url = request.args
+    print(url)
+
     return json.dumps({'direction': gaze_dir})
 
 
